@@ -11,9 +11,18 @@ class GameView {
     this.stage.scale.x = width / gameState.worldWidth;
     this.stage.scale.y = height / gameState.worldHeight;
     let textures = LD48.textures;
+    this.rocketContainer = new PIXI.Container();
+    this.stage.addChild(this.rocketContainer);
     this.rocketSprite = new Sprite(textures["rocket.png"]);
     this.rocketSprite.anchor.set(0.5, 0.5);
-    this.stage.addChild(this.rocketSprite);
+    this.rocketSprite.rotation = Math.PI / 2;
+    this.rocketContainer.addChild(this.rocketSprite);
+    this.fireSprite = new Sprite(textures["fire.png"]);
+    this.fireSprite.anchor.set(0.5, 0.7);
+    this.fireSprite.rotation = -Math.PI / 2;
+    this.fireSprite.x = -this.rocketSprite.height * 0.37;
+    this.fireSprite.y = this.rocketSprite.width * 0.04;
+    this.rocketContainer.addChild(this.fireSprite);
     this.update();
   }
 
@@ -22,8 +31,10 @@ class GameView {
   }
 
   update() {
-    this.rocketSprite.position.set(this.state.rocket.x, this.state.rocket.y);
-    this.rocketSprite.rotation = this.state.rocket.a + Math.PI / 2;
+    let rocket = this.state.rocket;
+    this.rocketContainer.position.set(rocket.x, rocket.y);
+    this.rocketContainer.rotation = rocket.a;
+    this.fireSprite.scale.set(rocket.accel, rocket.accel);
   }
 
 }
