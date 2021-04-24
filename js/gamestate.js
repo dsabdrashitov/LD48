@@ -13,6 +13,13 @@ class Rocket {
   }
 
   update(delta) {
+    let accel = Math.random()
+    this.ax = accel * Math.cos(this.gameState.rocket.a);
+    this.ay = accel * Math.sin(this.gameState.rocket.a);
+    this.vx *= 0.8;
+    this.vy *= 0.8;
+    this.a += randomInt(-1, 2) * 2 * Math.PI / 360;
+
     this.vx += this.ax;
     this.vy += this.ay;
     this.x += this.vx;
