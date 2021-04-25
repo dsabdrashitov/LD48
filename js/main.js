@@ -16,7 +16,7 @@ function start() {
 
 function resourcesLoaded() {
   LD48.textures = PIXI.loader.resources["images/main-sheet.json"].textures;
-  LD48.level = new Level(1);
+  LD48.level = new Level(0, 0);
   LD48.level.attach();
 }
 
