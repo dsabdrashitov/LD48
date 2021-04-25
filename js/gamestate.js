@@ -69,4 +69,9 @@ class GameState {
     this.rocket.update(delta);
   }
 
+  goal() {
+    let absoluteSpeed = Math.hypot(this.rocket.vx, this.rocket.vy);
+    return absoluteSpeed > 40;
+  }
+
 }
