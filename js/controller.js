@@ -34,7 +34,7 @@ class GameController {
     this.state.rocket.accelerateRotation(dir);
   }
 
-  detouch() {
+  detach() {
     this.keyAccelerate.unsubscribe();
     this.keyLeft.unsubscribe();
     this.keyRight.unsubscribe();
