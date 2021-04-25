@@ -1,6 +1,7 @@
 
 class Rocket {
 
+  static RADIUS = 64;
   static ROTATION_ACCELERATION = 2 * Math.PI / 720;
   static ROTATION_FRICTION = 0.99;
   static MOVEMENT_ACCELERATION = 0.5;
@@ -57,11 +58,11 @@ class Rocket {
 
 class GameState {
 
-  worldWidth = 800;
-  worldHeight = 600;
-
-  constructor() {
+  constructor(width, height) {
+    this.worldWidth = width;
+    this.worldHeight = height;
     this.rocket = new Rocket(this);
+    this.objects = [];
   }
 
   update(delta) {
