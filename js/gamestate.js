@@ -9,8 +9,8 @@ class Rocket {
 
   constructor(gameState) {
     this.gameState = gameState;
-    this.x = 0;
-    this.y = 0;
+    this.x = gameState.worldWidth / 2;
+    this.y = gameState.worldHeight / 2;
     this.a = 0;
     this.vx = 0;
     this.vy = 0;
