@@ -59,8 +59,8 @@ class Rocket {
 class GameState {
 
   constructor(width, height, coordX, coordY) {
-    this.coordX = 0;
-    this.coordY = 0;
+    this.coordX = coordX;
+    this.coordY = coordY;
     this.worldWidth = width;
     this.worldHeight = height;
     this.rocket = new Rocket(this);
