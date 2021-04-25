@@ -8,8 +8,24 @@ class GameView {
     this.stage = new PIXI.Container();
     this.stage.scale.x = width / gameState.worldWidth;
     this.stage.scale.y = height / gameState.worldHeight;
+
+    this.stageBackground = new PIXI.Container();
+    this.stageUnderRocketLarge = new PIXI.Container();
+    this.stageUnderRocketSmall = new PIXI.Container();
+    this.stageRocket = new PIXI.Container();
+    this.stageOverRocket = new PIXI.Container();
+
+    this.stage.addChild(this.stageBackground);
+    this.stage.addChild(this.stageUnderRocketLarge);
+    this.stage.addChild(this.stageUnderRocketSmall);
+    this.stage.addChild(this.stageRocket);
+    this.stage.addChild(this.stageOverRocket);
+
     this.rocketContainer = this._createRocket();
-    this.stage.addChild(this.rocketContainer);
+    this.stageRocket.addChild(this.rocketContainer);
+
+    this.teleportsCache = [];
+
     this.update();
   }
 
@@ -52,6 +68,43 @@ class GameView {
     this.rocketContainer.rotation = rocket.a;
     let accelFrac = rocket.accel / Rocket.MOVEMENT_ACCELERATION;
     this._setFireSize(accelFrac);
+
+    this._updateTeleports();
+  }
+
+  _updateTeleports() {
+    let toAdd = this.state.teleports.length - this.teleportsCache.length;
+    for (let i = toAdd; i >= 0; i--) {
+      let tback = new PIXI.Sprite(LD48.textures["blackhole-back.png"])
+      let tfront = new PIXI.Sprite(LD48.textures["blackhole-front.png"])
+      tback.visible = false;
+      tfront.visible = false;
+      this.stageUnderRocketSmall.addChild(tback);
+      this.stageOverRocket.addChild(tfront);
+      tback.pivot.set(120, 120);
+      tfront.pivot.set(120, 120);
+      let scale = Teleport.RADIUS / 72;
+      tback.scale.set(scale, scale);
+      tfront.scale.set(scale, scale);
+      this.teleportsCache.push([tback, tfront]);
+    }
+    for (
+      let i = this.state.teleports.length; i < this.teleportsCache.length; i++
+    ) {
+      this.teleportsCache[i][0].visible = false;
+      this.teleportsCache[i][1].visible = false;
+    }
+    for (let i = 0; i < this.state.teleports.length; i++) {
+      let tback = this.teleportsCache[i][0];
+      let tfront = this.teleportsCache[i][1];
+      let teleport = this.state.teleports[i];
+      tback.position.set(teleport.x, teleport.y);
+      tfront.position.set(teleport.x, teleport.y);
+      tback.rotation = teleport.a;
+      tfront.rotation = teleport.a;
+      tback.visible = true;
+      tfront.visible = teleport.isIn(this.state.rocket);
+    }
   }
 
 }
