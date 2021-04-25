@@ -2,7 +2,6 @@
 class GameView {
 
   constructor(width, height, gameState) {
-    console.log(width, height);
     const Sprite = PIXI.Sprite;
     this.width = width;
     this.height = height;
