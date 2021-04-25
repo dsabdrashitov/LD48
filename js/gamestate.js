@@ -1,6 +1,11 @@
 
 class Rocket {
 
+  static ROTATION_ACCELERATION = 2 * Math.PI / 720;
+  static ROTATION_FRICTION = 0.99;
+  static MOVEMENT_ACCELERATION = 0.5;
+  static MOVEMENT_FRICTION = 0.99;
+
   constructor(gameState) {
     this.gameState = gameState;
     this.x = 0;
@@ -8,26 +13,43 @@ class Rocket {
     this.a = 0;
     this.vx = 0;
     this.vy = 0;
+    this.va = 0;
     this.accel = 0;
+    this.rotaccel = 0;
   }
 
   update(delta) {
-    this.vx = this.vx * 0.8 + this.accel * Math.cos(this.gameState.rocket.a);
-    this.vy = this.vy * 0.8 + this.accel * Math.sin(this.gameState.rocket.a);
+    this.vx = this.vx * Rocket.MOVEMENT_FRICTION +
+      this.accel * Math.cos(this.gameState.rocket.a);
+    this.vy = this.vy * Rocket.MOVEMENT_FRICTION +
+      this.accel * Math.sin(this.gameState.rocket.a);
 
-    this.a += randomInt(-1, 2) * 2 * Math.PI / 360;
+    this.va = this.va * Rocket.ROTATION_FRICTION + this.rotaccel;
 
     this.x += this.vx;
     this.y += this.vy;
-    this.x = mod(this.x, this.gameState.worldWidth);
-    this.y = mod(this.y, this.gameState.worldHeight);
+    this.x = modFloat(this.x, this.gameState.worldWidth);
+    this.y = modFloat(this.y, this.gameState.worldHeight);
+
+    this.a += this.va;
+    this.a = modFloat(this.a, 2 * Math.PI);
   }
 
-  accelerate(flag) {
-    if (flag) {
-      this.accel = 1.0;
+  accelerate(forward) {
+    if (forward) {
+      this.accel = Rocket.MOVEMENT_ACCELERATION;
     } else {
       this.accel = 0.0;
+    }
+  }
+
+  accelerateRotation(dir) {
+    if (dir < 0) {
+      this.rotaccel = -Rocket.ROTATION_ACCELERATION;
+    } else if (dir > 0) {
+      this.rotaccel = Rocket.ROTATION_ACCELERATION;
+    } else {
+      this.rotaccel = 0;
     }
   }
 

@@ -12,10 +12,26 @@ class GameController {
     this.keyAccelerate.release = () => {
       this.accelerate(false);
     };
+    this.keyLeft.press = () => {
+      this.accelerateRotation(-1);
+    };
+    this.keyLeft.release = () => {
+      this.accelerateRotation(0);
+    };
+    this.keyRight.press = () => {
+      this.accelerateRotation(1);
+    };
+    this.keyRight.release = () => {
+      this.accelerateRotation(0);
+    };
   }
 
   accelerate(flag) {
     this.state.rocket.accelerate(flag);
+  }
+
+  accelerateRotation(dir) {
+    this.state.rocket.accelerateRotation(dir);
   }
 
   detouch() {
