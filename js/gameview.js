@@ -34,7 +34,10 @@ class GameView {
     let rocket = this.state.rocket;
     this.rocketContainer.position.set(rocket.x, rocket.y);
     this.rocketContainer.rotation = rocket.a;
-    this.fireSprite.scale.set(rocket.accel, rocket.accel);
+    this.fireSprite.scale.set(
+      (rocket.accel + 0.3) * (Math.random() + 0.1),
+      (rocket.accel + 0.3) * (Math.random() + 0.1)
+    );
   }
 
 }

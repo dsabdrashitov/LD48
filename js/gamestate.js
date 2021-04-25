@@ -12,7 +12,6 @@ class Rocket {
   }
 
   update(delta) {
-    this.accel = Math.random();
     this.vx = this.vx * 0.8 + this.accel * Math.cos(this.gameState.rocket.a);
     this.vy = this.vy * 0.8 + this.accel * Math.sin(this.gameState.rocket.a);
 
@@ -22,6 +21,14 @@ class Rocket {
     this.y += this.vy;
     this.x = mod(this.x, this.gameState.worldWidth);
     this.y = mod(this.y, this.gameState.worldHeight);
+  }
+
+  accelerate(flag) {
+    if (flag) {
+      this.accel = 1.0;
+    } else {
+      this.accel = 0.0;
+    }
   }
 
 }

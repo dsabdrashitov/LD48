@@ -3,6 +3,7 @@ window.LD48 = {
   app: null,
   state: null,
   view: null,
+  controller: null,
   textures: null,
 };
 
@@ -23,6 +24,7 @@ function resourcesLoaded() {
   let view = LD48.view;
   app.stage.addChild(view.getStage());
   app.ticker.add(gameLoop);
+  LD48.controller = new GameController(LD48.state);
 }
 
 function gameLoop(delta) {
