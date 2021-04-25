@@ -1,8 +1,8 @@
 
 class Level {
 
-  static FINAL_DISTANCE = 400;
-  static FINAL_SCALE = 5;
+  static FINAL_DISTANCE = 100;
+  static FINAL_SCALE = 7;
 
   constructor(coordX, coordY) {
     this.level = Math.hypot(coordX, coordY) / Level.FINAL_DISTANCE;

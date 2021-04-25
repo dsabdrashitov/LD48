@@ -3,16 +3,18 @@ class Rocket {
 
   static RADIUS = 64;
   static ROTATION_ACCELERATION = 2 * Math.PI / 720;
-  static ROTATION_FRICTION = 0.99;
-  static MOVEMENT_ACCELERATION = 0.5;
-  static MOVEMENT_FRICTION = 0.99;
+  static ROTATION_FRICTION = 0.9;
+  static MOVEMENT_ACCELERATION = 0.1;
+  static MOVEMENT_FRICTION = 1.0;
 
   constructor(gameState) {
     this.gameState = gameState;
     this.x = (0.2 + 0.8 * Math.random()) * gameState.worldWidth;
     this.y = (0.2 + 0.8 * Math.random()) * gameState.worldHeight;
     this.a = 0;
-    let initSpeed = Rocket.MOVEMENT_ACCELERATION * 10 * (0.2 + 0.8 * Math.random());
+    let initSpeed = (
+      Rocket.MOVEMENT_ACCELERATION * 10 * (0.2 + 0.8 * Math.random())
+    );
     this.vx = initSpeed * Math.cos(this.a);
     this.vy = initSpeed * Math.sin(this.a);
     this.va = 0;
@@ -68,8 +70,8 @@ class Rocket {
 
 class Teleport {
 
-  static TOLERANCE = 96;
-  static RADIUS = 32 + Teleport.TOLERANCE;
+  static TOLERANCE = 112;
+  static RADIUS = 16 + Teleport.TOLERANCE;
 
   constructor(gameState, activationSpeed) {
     this.gameState = gameState;
@@ -98,10 +100,13 @@ class Teleport {
     let vy = this.gameState.rocket.vy - this.vy;
     let v = Math.hypot(vx, vy);
     let power = v / this.activationSpeed;
-    if (power > 1) {
-      power = 1;
+    if (power < 1) {
+      return power;
     }
-    return power;
+    if (power > 1.2) {
+      return Math.max(0, 2.2 - power);
+    }
+    return 1;
   }
 
   isActive() {
@@ -143,7 +148,9 @@ class GameState {
     this.worldWidth = width;
     this.worldHeight = height;
     this.rocket = new Rocket(this);
-    this.teleports = [new Teleport(this, 10.0)];
+    this.teleports = [
+      new Teleport(this, (0.1 + 0.9 * Math.random()) * 10.0),
+    ];
   }
 
   update(delta) {
