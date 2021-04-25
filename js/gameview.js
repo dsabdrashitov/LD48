@@ -110,3 +110,30 @@ class GameView {
   }
 
 }
+
+class StarsCollection {
+
+  static FINAL_SPEED = 100;
+  static LINE_SPEED = FINAL_SPEED * 0.2;
+
+  constructor(gameState) {
+    this.sx = (
+      -gameState.coordX / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED
+    );
+    this.sy = (
+      -gameState.coordY / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED
+    );
+    this.vx = Math.min(this.sx, StarsCollection.LINE_SPEED);
+    this.vy = Math.min(this.sy, StarsCollection.LINE_SPEED);
+    this.sx -= this.vx;
+    this.sy -= this.vy;
+
+    let cnt = Math.floor((gameState.worldWidth * gameState.worldHeight) / 400);
+    this.sprites = [];
+    for (let i = 0; i < cnt; i++) {
+      let line = new PIXI.Graphics();
+      // TODO: continue
+    }
+  }
+
+}
