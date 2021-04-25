@@ -83,7 +83,7 @@ class GameView {
       this.stageOverRocket.addChild(tfront);
       tback.pivot.set(120, 120);
       tfront.pivot.set(120, 120);
-      let scale = Teleport.RADIUS / 72;
+      let scale = Teleport.RADIUS / 120;
       tback.scale.set(scale, scale);
       tfront.scale.set(scale, scale);
       this.teleportsCache.push([tback, tfront]);
@@ -103,7 +103,9 @@ class GameView {
       tback.rotation = teleport.a;
       tfront.rotation = teleport.a;
       tback.visible = true;
-      tfront.visible = teleport.isIn(this.state.rocket);
+      let power = teleport.power();
+      tback.alpha = teleport.power() ** 3;
+      tfront.visible = teleport.isActive();
     }
   }
 

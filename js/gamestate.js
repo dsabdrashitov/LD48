@@ -56,34 +56,32 @@ class Rocket {
   }
 
   findTeleport() {
-    let absoluteSpeed = Math.hypot(this.vx, this.vy);
-    if (absoluteSpeed < 40) {
-      return null;
-    }
     for (let i = 0; i < this.gameState.teleports.length; i++) {
       if (this.gameState.teleports[i].isIn(this)) {
         return this.gameState.teleports[i];
       }
     }
+    return null;
   }
 
 }
 
 class Teleport {
 
-  static TOLERANCE = 32;
-  static RADIUS = 64 + Teleport.TOLERANCE;
+  static TOLERANCE = 96;
+  static RADIUS = 32 + Teleport.TOLERANCE;
 
-  constructor(gameState) {
+  constructor(gameState, activationSpeed) {
     this.gameState = gameState;
     this.x = Math.random() * gameState.worldWidth;
     this.y = Math.random() * gameState.worldHeight;
     this.a = Math.random() * 2 * Math.PI;
     let alpha = Math.random() * 2 * Math.PI;
-    let initSpeed = 1 * (0.05 + 0.95 * Math.random());
+    let initSpeed = activationSpeed / 2 * (0.05 + 0.95 * Math.random());
     this.vx = initSpeed * Math.cos(alpha);
     this.vy = initSpeed * Math.sin(alpha);
-    this.va = Math.random() * (Math.PI / 60) * 0.1;
+    this.va = Math.random() * (Math.PI / 60) * 0.5;
+    this.activationSpeed = activationSpeed;
   }
 
   update(delta) {
@@ -95,22 +93,43 @@ class Teleport {
     this.a = modFloat(this.a, 2 * Math.PI);
   }
 
+  power() {
+    let vx = this.gameState.rocket.vx - this.vx;
+    let vy = this.gameState.rocket.vy - this.vy;
+    let v = Math.hypot(vx, vy);
+    let power = v / this.activationSpeed;
+    if (power > 1) {
+      power = 1;
+    }
+    return power;
+  }
+
+  isActive() {
+    return this.power() == 1;
+  }
+
   isIn(rocket) {
-    let dx1 = this.x - rocket.x;
-    let dy1 = this.y - rocket.y;
-    let dx2 = rocket.vx - this.vx;
-    let dy2 = rocket.vy - this.vy;
-    let len2 = Math.hypot(dx2, dy2);
-    let vec = (dx1 * dy2 - dy1 * dx2) / len2;
-    if (Math.abs(vec) > Teleport.TOLERANCE) {
+    if (!this.isActive()) {
       return false;
     }
-    let at2r = Math.atan2(-dy1, -dx1);
-    let len1 = Math.sin(at2r - this.a) * Math.hypot(dx1, dy1);
-    if (Math.abs(len1) > Teleport.RADIUS) {
+    let dxd = this.x - rocket.x;
+    let dyd = this.y - rocket.y;
+    let vx = rocket.vx - this.vx;
+    let vy = rocket.vy - this.vy;
+    let dv = Math.hypot(vx, vy);
+    let dproj = (dxd * vx + dyd * vy) / dv;
+    if (dproj < 0) {
       return false;
     }
-    console.log(this.a, at2r, vec);
+    if (dproj > dv) {
+      return false;
+    }
+    let xproj = rocket.x + dproj * vx / dv;
+    let yproj = rocket.y + dproj * vy / dv;
+    if (Math.hypot(xproj - this.x, yproj - this.y) > Teleport.TOLERANCE) {
+      console.log(xproj - this.x, yproj - this.y);
+      return false;
+    }
     return true;
   }
 
@@ -124,7 +143,7 @@ class GameState {
     this.worldWidth = width;
     this.worldHeight = height;
     this.rocket = new Rocket(this);
-    this.teleports = [new Teleport(this)];
+    this.teleports = [new Teleport(this, 10.0)];
   }
 
   update(delta) {
