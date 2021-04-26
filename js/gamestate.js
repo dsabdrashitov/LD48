@@ -1,4 +1,80 @@
 
+class GameState {
+
+  constructor(width, height, coordX, coordY, level) {
+    this.level = level;
+
+    this.coordX = coordX;
+    this.coordY = coordY;
+
+    this.worldWidth = width;
+    this.worldHeight = height;
+    this.rocket = new Rocket(this);
+    this.teleports = [];
+    this.addRandomTeleport();
+    this.planets = [];
+  }
+
+  addRandomPlanet() {
+    this.planets.push(new Planet(this));
+  }
+
+  addRandomTeleport() {
+    this.teleports.push(new Teleport(this, (0.1 + 0.9 * Math.random()) * 10.0));
+  }
+
+  update(delta) {
+    this.rocket.update(delta);
+    this.teleports.forEach(teleport => {
+      teleport.update(delta);
+    });
+    this.planets.forEach(planet => {
+      planet.update(delta);
+    });
+  }
+
+  goal() {
+    let teleport = this.rocket.findTeleport();
+    if (teleport === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+}
+
+class Planet {
+
+  static MIN_RADIUS = 64;
+  static MAX_RADIUS = 400;
+
+  constructor(gameState) {
+    this.gameState = gameState;
+    this.x = (0.3 + 0.7 * Math.random()) * gameState.worldWidth;
+    this.y = (0.3 + 0.7 * Math.random()) * gameState.worldHeight;
+    this.a = Math.random() * 2 * Math.PI;
+    this.va = 2 * Math.PI * 0.1 / 60 * (0.2 + 0.8 * Math.random());
+    this.radius = randomInt(Planet.MIN_RADIUS, Planet.MAX_RADIUS);
+  }
+  _moveObject(object) {
+    let dist = Math.hypot(this.x - object.x, this.y - object.y);
+    if (dist < this.radius) {
+      let v = Math.hypot(object.vx, object.vy);
+      let a = Math.atan2(object.vy, object.vx);
+      // let at = Math.atan2(this.y - object.y, this.x - object.x);
+      //let mult = 1.5 + 1.5 * Math.random();
+      let an = a  + 3 * this.va;
+      object.vx = v * Math.cos(an);
+      object.vy = v * Math.sin(an);
+    }
+  }
+  update(delta) {
+    this.a = modFloat(this.a + this.va, 2 * Math.PI);
+    this._moveObject(this.gameState.rocket);
+  }
+}
+
 class Rocket {
 
   static RADIUS = 64;
@@ -137,43 +213,6 @@ class Teleport {
       return false;
     }
     return true;
-  }
-
-}
-
-class GameState {
-
-  constructor(width, height, coordX, coordY, level) {
-    this.level = level;
-
-    this.coordX = coordX;
-    this.coordY = coordY;
-
-    this.worldWidth = width;
-    this.worldHeight = height;
-    this.rocket = new Rocket(this);
-    this.teleports = [];
-    this.addRandomTeleport();
-  }
-
-  addRandomTeleport() {
-    this.teleports.push(new Teleport(this, (0.1 + 0.9 * Math.random()) * 10.0));
-  }
-
-  update(delta) {
-    this.rocket.update(delta);
-    this.teleports.forEach(teleport => {
-      teleport.update(delta);
-    });
-  }
-
-  goal() {
-    let teleport = this.rocket.findTeleport();
-    if (teleport === null) {
-      return false;
-    } else {
-      return true;
-    }
   }
 
 }

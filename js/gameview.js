@@ -26,6 +26,7 @@ class GameView {
     this.stageRocket.addChild(this.rocketContainer);
 
     this.teleportsCache = [];
+    this.planetsCache = [];
 
     this.starsCollection = new StarsCollection(gameState);
     this.stageBackground.addChild(this.starsCollection.getStage());
@@ -80,6 +81,7 @@ class GameView {
     this._setFireSize(accelFrac);
 
     this._updateTeleports();
+    this._updatePlanets();
 
     this.levelInfo.update();
 
@@ -120,6 +122,33 @@ class GameView {
       let power = teleport.power();
       tback.alpha = teleport.power() ** 3;
       tfront.visible = teleport.isActive();
+    }
+  }
+
+  _updatePlanets() {
+    let toAdd = this.state.planets.length - this.planetsCache.length;
+    const names = ["planet1.png", "planet2.png", "planet3.png"];
+    for (let i = toAdd; i >= 0; i--) {
+      let name = names[randomInt(0, names.length)];
+      let sprite = new PIXI.Sprite(LD48.textures[name])
+      sprite.visible = false;
+      this.stageUnderRocketLarge.addChild(sprite);
+      sprite.pivot.set(200, 200);
+      this.planetsCache.push(sprite);
+    }
+    for (
+      let i = this.state.planets.length; i < this.planetsCache.length; i++
+    ) {
+      this.planetsCache[i].visible = false;
+    }
+    for (let i = 0; i < this.state.planets.length; i++) {
+      let sprite = this.planetsCache[i];
+      let planet = this.state.planets[i];
+      let scale = planet.radius / 200;
+      sprite.scale.set(scale, scale);
+      sprite.position.set(planet.x, planet.y);
+      sprite.rotation = planet.a;
+      sprite.visible = true;
     }
   }
 
