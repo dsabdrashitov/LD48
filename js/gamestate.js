@@ -13,6 +13,8 @@ class GameState {
     this.teleports = [];
     this.addRandomTeleport();
     this.planets = [];
+
+    this.voyager = null;
   }
 
   addRandomPlanet() {
@@ -31,6 +33,9 @@ class GameState {
     this.planets.forEach(planet => {
       planet.update(delta);
     });
+    if (this.voyager != null) {
+      this.voyager.update();
+    }
   }
 
   goal() {
@@ -42,6 +47,19 @@ class GameState {
     }
   }
 
+}
+
+class Voyager {
+  constructor() {
+    this.x = 0;
+    this.y = 0;
+    this.a = 0;
+    this.va = 2 * Math.PI * 0.1 / 60;
+  }
+  update(delta) {
+    this.a += this.va;
+    this.a = modFloat(this.a, 2 * Math.PI);
+  }
 }
 
 class Planet {

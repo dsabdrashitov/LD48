@@ -79,27 +79,30 @@ class Level {
   }
 
   doWin() {
-    let style = new PIXI.TextStyle({
-      fontFamily: "Arial",
-      fontSize: 36,
-      fill: "white",
-      stroke: '#33ff00',
-      strokeThickness: 4,
-      dropShadow: true,
-      dropShadowColor: "#000000",
-      dropShadowBlur: 4,
-      dropShadowAngle: Math.PI / 6,
-      dropShadowDistance: 6,
-    });
-    let text = new PIXI.Text("You won!", style);
-    text.position.set(
-      LD48.app.screen.width / 2,
-      LD48.app.screen.height / 2
+    let app = LD48.app;
+    this.detach();
+
+    this.state = new GameState(
+      this.state.worldWidth,
+      this.state.worldHeight,
+      this.state.coordX,
+      this.state.coordY,
+      this.state.level
     );
-    text.anchor.set(0.5, 0.5);
-    LD48.app.stage.addChild(text);
-    LD48.app.ticker.remove(this.gameLoopCallback);
-    this.controller.detach();
+
+    this.state.rocket.x = this.state.worldWidth / 3;
+    this.state.rocket.y = this.state.worldHeight / 3;
+    this.state.voyager = new Voyager();
+    this.state.voyager.x = this.state.worldWidth / 3 * 2;
+    this.state.voyager.y = this.state.worldHeight / 3 * 2;
+
+    this.state.teleports = [];
+    this.state.planets = [];
+
+    this.view = new GameView(app.screen.width, app.screen.height, this.state);
+    app.stage.addChild(this.view.getStage());
+    this.gameLoopCallback = this.gameLoop.bind(this);
+    app.ticker.add(this.gameLoopCallback);
   }
 
 }

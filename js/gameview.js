@@ -38,6 +38,14 @@ class GameView {
     this.allStage.addChild(this.stage);
     this.allStage.addChild(this.stageInfo);
 
+    if (gameState.voyager != null) {
+      this.finalVoyager = new PIXI.Sprite(LD48.textures["voyager.png"]);
+      this.finalVoyager.scale.set(2, 2);
+      this.finalVoyager.pivot.set(140, 113);
+      this.stageRocket.addChild(this.finalVoyager);
+      this.levelInfo.getContainer().visible = false;
+    }
+
     this.update();
   }
 
@@ -86,6 +94,32 @@ class GameView {
     this.levelInfo.update();
 
     this.starsCollection.update();
+
+    if (this.state.voyager != null) {
+      this.finalVoyager.x = this.state.voyager.x;
+      this.finalVoyager.y = this.state.voyager.y;
+      this.finalVoyager.rotation = this.state.voyager.a;
+
+      let style = new PIXI.TextStyle({
+        fontFamily: "Arial",
+        fontSize: 36,
+        fill: "white",
+        stroke: '#33ff00',
+        strokeThickness: 4,
+        dropShadow: true,
+        dropShadowColor: "#000000",
+        dropShadowBlur: 4,
+        dropShadowAngle: Math.PI / 6,
+        dropShadowDistance: 6,
+      });
+      let text = new PIXI.Text("You won!", style);
+      text.position.set(
+        LD48.app.screen.width / 2,
+        LD48.app.screen.height / 2
+      );
+      text.anchor.set(0.5, 0.5);
+      this.stageInfo.addChild(text);
+    }
   }
 
   _updateTeleports() {
