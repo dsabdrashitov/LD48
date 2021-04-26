@@ -8,6 +8,7 @@ class GameView {
     this.stage = new PIXI.Container();
     this.stage.scale.x = width / gameState.worldWidth;
     this.stage.scale.y = height / gameState.worldHeight;
+    this.stageInfo = new PIXI.Container();
 
     this.stageBackground = new PIXI.Container();
     this.stageUnderRocketLarge = new PIXI.Container();
@@ -28,6 +29,13 @@ class GameView {
 
     this.starsCollection = new StarsCollection(gameState);
     this.stageBackground.addChild(this.starsCollection.getStage());
+
+    this.levelInfo = new DistanceToFinalInfo(this.state.level, width, height);
+    this.stageInfo.addChild(this.levelInfo.getContainer());
+
+    this.allStage = new PIXI.Container();
+    this.allStage.addChild(this.stage);
+    this.allStage.addChild(this.stageInfo);
 
     this.update();
   }
@@ -61,7 +69,7 @@ class GameView {
   }
 
   getStage() {
-    return this.stage;
+    return this.allStage;
   }
 
   update() {
@@ -72,6 +80,8 @@ class GameView {
     this._setFireSize(accelFrac);
 
     this._updateTeleports();
+
+    this.levelInfo.update();
 
     this.starsCollection.update();
   }
@@ -113,6 +123,42 @@ class GameView {
     }
   }
 
+}
+
+class DistanceToFinalInfo {
+  constructor(level, width, height) {
+    this.level = level;
+    this.width = width;
+    this.height = height;
+    this.container = new PIXI.Container();
+    this.graphics = null;
+    this.update();
+  }
+  getContainer() {
+    return this.container;
+  }
+  update() {
+    if (this.graphics != null) {
+      this.container.removeChild(this.graphics);
+    }
+    this.graphics = this._buildGraphics(this.level);
+    this.container.addChild(this.graphics);
+  }
+  _buildGraphics(level) {
+    let g = new PIXI.Graphics();
+    g.lineStyle(2, 0xFFFFFF, 0.5);
+    let bx0 = 10;
+    let by0 = this.height - 30;
+    let bw = (this.width - 70) - bx0;
+    let bh = (this.height - 20) - by0;
+    g.drawRect(bx0, by0, bw, bh);
+    g.lineStyle(0);
+    g.beginFill(0xFFFFFF, 0.3);
+    let maxLen = bw - 2 * 3;
+    g.drawRect(bx0 + 3, by0 + 3, maxLen * level, bh - 2 * 3);
+    g.endFill();
+    return g;
+  }
 }
 
 class StarsCollection {
