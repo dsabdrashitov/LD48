@@ -117,44 +117,48 @@ class GameView {
 
 class StarsCollection {
 
-  static FINAL_SPEED = 100;
-  static LINE_SPEED = StarsCollection.FINAL_SPEED * 0.2;
+  static FINAL_SPEED = 1000;
 
   constructor(gameState) {
     this.width = gameState.worldWidth;
     this.height = gameState.worldHeight;
-    this.sx = (
-      -gameState.coordX / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED
-    );
-    this.sy = (
-      -gameState.coordY / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED
-    );
-    this.vx = Math.min(this.sx, StarsCollection.LINE_SPEED);
-    this.vy = Math.min(this.sy, StarsCollection.LINE_SPEED);
-    this.sx -= this.vx;
-    this.sy -= this.vy;
+
+    let al = Math.atan2(-gameState.coordY, -gameState.coordX);
+    let len = Math.hypot(gameState.coordX, gameState.coordY);
+    len = len / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED;
+    this.vx = len * Math.cos(al);
+    this.vy = len * Math.sin(al);
 
     this.stage = new PIXI.Container();
+    this.canvas = new PIXI.Graphics();
 
-    let cnt = Math.floor((this.width * this.height) / 1600);
-    this.sprites = [];
+    let g = this.canvas;
+    // let cnt = Math.floor((this.width * this.height) / 10000);
+    let cnt = Math.ceil(this.width / 40);
     for (let i = 0; i < cnt; i++) {
-      let star = new PIXI.Graphics();
-      star.x = (Math.random() * 3 - 1) * this.width;
-      star.y = (Math.random() * 3 - 1) * this.height;
-
+      let x0 = Math.random() * this.width;
+      let y0 = Math.random() * this.height;
       let sr = 1 + Math.random() * 5;
-      star.lineStyle(sr, 0xFFFFFF);
-      star.moveTo(0, 0);
-      star.lineTo(this.sx, this.sy);
-      star.lineStyle(0);
-      star.beginFill(0xFFFFFF);
-      star.drawCircle(0, 0, sr);
-      star.drawCircle(this.sx, this.sy, sr);
-      star.endFill();
-      this.sprites.push(star);
-      this.stage.addChild(star);
+      g.lineStyle(sr, 0xFFFFFF);
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          let x1 = x0 + dx * this.width;
+          let y1 = y0 + dy * this.height;
+          g.moveTo(x1, y1);
+          g.lineTo(
+            x1 + sr * Math.cos(al),
+            y1 + sr * Math.sin(al)
+          );
+        }
+      }
+
+      // g.lineStyle(0);
+      // g.beginFill(0xFFFFFF);
+      // g.drawCircle(x0, y0, sr);
+      // g.endFill();
     }
+
+    this.stage.addChild(this.canvas);
   }
 
   getStage() {
@@ -162,13 +166,10 @@ class StarsCollection {
   }
 
   update() {
-    for (let i = 0; i < this.sprites.length; i++) {
-      let line = this.sprites[i];
-      line.x += this.vx / 60;
-      line.y += this.vy / 60;
-      // line.x = -this.width + modFloat(this.widht + line.x, 3 * this.width);
-      // line.y = -this.height + modFloat(this.height + line.y, 3 * this.height);
-    }
+    this.canvas.x += this.vx / 60;
+    this.canvas.y += this.vy / 60;
+    this.canvas.x = modFloat(this.canvas.x, this.width);
+    this.canvas.y = modFloat(this.canvas.y, this.height);
   }
 
 }

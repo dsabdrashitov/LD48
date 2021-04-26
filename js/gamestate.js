@@ -72,7 +72,7 @@ class Teleport {
 
   static TOLERANCE = 112;
   static RADIUS = 16 + Teleport.TOLERANCE;
-  static SPEED_TOLERANCE = 0.25;
+  static SPEED_TOLERANCE = 0.5;
 
   constructor(gameState, activationSpeed) {
     this.gameState = gameState;
