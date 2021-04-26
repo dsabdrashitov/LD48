@@ -132,6 +132,20 @@ class DistanceToFinalInfo {
     this.height = height;
     this.container = new PIXI.Container();
     this.graphics = null;
+    this.voyager_a = 0;
+    this.voyager_va = (2 * Math.PI * 0.1) / 60;
+    this.voyager = new PIXI.Sprite(LD48.textures["voyager.png"])
+    this.voyager.pivot.set(140, 113);
+    // this.voyager.pivot.set(130, 142);
+    this.voyager.width = 64;
+    this.voyager.height = 64;
+    this.voyager.position.set(this.width - 32, this.height - 32);
+    this.voyager.rotation = this.voyager_a;
+    this.container.addChild(this.voyager);
+    // let g = new PIXI.Graphics();
+    // g.lineStyle(2, 0xFFFFFF, 0.5);
+    // g.drawRect(this.voyager.x - 47, this.voyager.y - 47, 94, 94);
+    // this.container.addChild(g);
     this.update();
   }
   getContainer() {
@@ -143,14 +157,16 @@ class DistanceToFinalInfo {
     }
     this.graphics = this._buildGraphics(this.level);
     this.container.addChild(this.graphics);
+    this.voyager_a = modFloat(this.voyager_a + this.voyager_va, 2 * Math.PI);
+    this.voyager.rotation = this.voyager_a;
   }
   _buildGraphics(level) {
     let g = new PIXI.Graphics();
     g.lineStyle(2, 0xFFFFFF, 0.5);
     let bx0 = 10;
-    let by0 = this.height - 30;
+    let by0 = this.height - 35;
     let bw = (this.width - 70) - bx0;
-    let bh = (this.height - 20) - by0;
+    let bh = (this.height - 25) - by0;
     g.drawRect(bx0, by0, bw, bh);
     g.lineStyle(0);
     g.beginFill(0xFFFFFF, 0.3);
