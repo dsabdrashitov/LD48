@@ -72,7 +72,7 @@ class Teleport {
 
   static TOLERANCE = 112;
   static RADIUS = 16 + Teleport.TOLERANCE;
-  static SPEED_TOLERANCE = 0.5;
+  static SPEED_TOLERANCE = 0.25;
 
   constructor(gameState, activationSpeed) {
     this.gameState = gameState;
@@ -145,16 +145,19 @@ class GameState {
 
   constructor(width, height, coordX, coordY, level) {
     this.level = level;
-    
+
     this.coordX = coordX;
     this.coordY = coordY;
 
     this.worldWidth = width;
     this.worldHeight = height;
     this.rocket = new Rocket(this);
-    this.teleports = [
-      new Teleport(this, (0.1 + 0.9 * Math.random()) * 10.0),
-    ];
+    this.teleports = [];
+    this.addRandomTeleport();
+  }
+
+  addRandomTeleport() {
+    this.teleports.push(new Teleport(this, (0.1 + 0.9 * Math.random()) * 10.0));
   }
 
   update(delta) {

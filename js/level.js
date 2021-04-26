@@ -18,6 +18,14 @@ class Level {
       coordY,
       level
     );
+
+    if (level > 0.25) {
+      this.state.addRandomTeleport();
+    }
+    if (level > 0.5) {
+      this.state.addRandomTeleport();
+    }
+
     this.view = new GameView(app.screen.width, app.screen.height, this.state);
   }
 
