@@ -25,7 +25,7 @@ class Level {
     if (level > 0.5) {
       this.state.addRandomTeleport();
     }
-    if (level > 0) {
+    if (level > 0.05) {
       if (Math.random() > 0.3) {
         this.state.addRandomPlanet();
       }

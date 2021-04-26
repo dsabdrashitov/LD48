@@ -46,7 +46,7 @@ class GameState {
 
 class Planet {
 
-  static MIN_RADIUS = 64;
+  static MIN_RADIUS = 128;
   static MAX_RADIUS = 400;
 
   constructor(gameState) {
