@@ -143,9 +143,12 @@ class Teleport {
 
 class GameState {
 
-  constructor(width, height, coordX, coordY) {
+  constructor(width, height, coordX, coordY, level) {
+    this.level = level;
+    
     this.coordX = coordX;
     this.coordY = coordY;
+
     this.worldWidth = width;
     this.worldHeight = height;
     this.rocket = new Rocket(this);

@@ -5,17 +5,18 @@ class Level {
   static FINAL_SCALE = 7;
 
   constructor(coordX, coordY) {
-    this.level = Math.hypot(coordX, coordY) / Level.FINAL_DISTANCE;
-    this.level = Math.min(this.level, 1.0);
-    console.log(`Level: ${this.level} (${coordX}, ${coordY}).`);
+    let level = Math.hypot(coordX, coordY) / Level.FINAL_DISTANCE;
+    level = Math.min(level, 1.0);
+    console.log(`Level: ${level} (${coordX}, ${coordY}).`);
 
     let app = LD48.app;
-    let scale = 1 + this.level * (Level.FINAL_SCALE - 1);
+    let scale = 1 + level * (Level.FINAL_SCALE - 1);
     this.state = new GameState(
-      app.screen.width * scale,
-      app.screen.height * scale,
+      800 * scale,
+      600 * scale,
       coordX,
-      coordY
+      coordY,
+      level
     );
     this.view = new GameView(app.screen.width, app.screen.height, this.state);
   }
@@ -37,16 +38,18 @@ class Level {
 
   gameLoop(delta) {
     if (this.state.goal()) {
-      if (this.level >= 1.0) {
+      if (this.state.level >= 1.0) {
         // Win.
         this.doWin();
         return;
       } else {
         // Next level.
         this.detach();
+        let rocket = this.state.rocket;
+        let teleport = this.state.rocket.findTeleport();
         LD48.level = new Level(
-          this.state.coordX + this.state.rocket.vx,
-          this.state.coordY + this.state.rocket.vy
+          this.state.coordX + rocket.vx - teleport.vx,
+          this.state.coordY + rocket.vy - teleport.vy
         );
         LD48.level.attach();
         return;
