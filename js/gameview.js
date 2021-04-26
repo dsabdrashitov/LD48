@@ -26,6 +26,9 @@ class GameView {
 
     this.teleportsCache = [];
 
+    this.starsCollection = new StarsCollection(gameState);
+    this.stageBackground.addChild(this.starsCollection.getStage());
+
     this.update();
   }
 
@@ -41,7 +44,6 @@ class GameView {
     this.fireSprite = new Sprite(textures["fire.png"]);
     this.basicFireScale = 1.5 * Rocket.RADIUS / textures["fire.png"].height;
     this._setFireSize(0.0);
-    //this.fireSprite.anchor.set(0.5, 0.7);
     this.fireSprite.pivot.set(63, 93);
     this.fireSprite.rotation = -Math.PI / 2;
     this.fireSprite.x = -Rocket.RADIUS;
@@ -70,6 +72,8 @@ class GameView {
     this._setFireSize(accelFrac);
 
     this._updateTeleports();
+
+    this.starsCollection.update();
   }
 
   _updateTeleports() {
@@ -114,9 +118,11 @@ class GameView {
 class StarsCollection {
 
   static FINAL_SPEED = 100;
-  static LINE_SPEED = FINAL_SPEED * 0.2;
+  static LINE_SPEED = StarsCollection.FINAL_SPEED * 0.2;
 
   constructor(gameState) {
+    this.width = gameState.worldWidth;
+    this.height = gameState.worldHeight;
     this.sx = (
       -gameState.coordX / Level.FINAL_DISTANCE * StarsCollection.FINAL_SPEED
     );
@@ -128,11 +134,40 @@ class StarsCollection {
     this.sx -= this.vx;
     this.sy -= this.vy;
 
-    let cnt = Math.floor((gameState.worldWidth * gameState.worldHeight) / 400);
+    this.stage = new PIXI.Container();
+
+    let cnt = Math.floor((this.width * this.height) / 1600);
     this.sprites = [];
     for (let i = 0; i < cnt; i++) {
-      let line = new PIXI.Graphics();
-      // TODO: continue
+      let star = new PIXI.Graphics();
+      star.x = (Math.random() * 3 - 1) * this.width;
+      star.y = (Math.random() * 3 - 1) * this.height;
+
+      let sr = 1 + Math.random() * 5;
+      star.lineStyle(sr, 0xFFFFFF);
+      star.moveTo(0, 0);
+      star.lineTo(this.sx, this.sy);
+      star.lineStyle(0);
+      star.beginFill(0xFFFFFF);
+      star.drawCircle(0, 0, sr);
+      star.drawCircle(this.sx, this.sy, sr);
+      star.endFill();
+      this.sprites.push(star);
+      this.stage.addChild(star);
+    }
+  }
+
+  getStage() {
+    return this.stage;
+  }
+
+  update() {
+    for (let i = 0; i < this.sprites.length; i++) {
+      let line = this.sprites[i];
+      line.x += this.vx / 60;
+      line.y += this.vy / 60;
+      // line.x = -this.width + modFloat(this.widht + line.x, 3 * this.width);
+      // line.y = -this.height + modFloat(this.height + line.y, 3 * this.height);
     }
   }
 
